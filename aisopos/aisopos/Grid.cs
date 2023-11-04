@@ -61,7 +61,6 @@ namespace aisopos
 
         public void reStructure(int rowChange, int colChange)
         {
-            //TODO: REWRITE
             rows += rowChange;
             cols += colChange;
             if (rows < 0) rows = 0;
@@ -69,15 +68,16 @@ namespace aisopos
             char[,] data_2 = new char[cols, rows];
             int preCol = data.GetLength(0);
             int preRow = data.GetLength(1);
-            for (int i = 0; i < data_2.Length; i++)
+            for (int i = 0; i < data_2.GetLength(0); i++)
             {
-                if (preCol > i % cols && preRow > i % rows)
+                if (i >= preCol) break;
+                for (int j = 0; j < data_2.GetLength(1); j++)
                 {
-                    data_2[i % cols, i % rows] = data[i % cols, i % rows];
+                    if (j >= preRow) break;
+                    data_2[i, j] = data[i, j];
                 }
             }
             data = data_2;
-            Debug.WriteLine(cols + "; " + rows);
         }
 
         public void move(int x, int y)
