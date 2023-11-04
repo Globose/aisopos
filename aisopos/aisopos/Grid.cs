@@ -21,7 +21,7 @@ namespace aisopos
         {
             this.cols = cols;
             this.rows = rows;
-            data = new char[rows,cols];
+            data = new char[cols, rows];
             current = new Point(0, 0);
             position = new Point(170, 580);
             sqSize = 116f;
@@ -44,13 +44,17 @@ namespace aisopos
         {
             rows += rowChange;
             cols += colChange;
-            char[,] data_2 = new char[rows, cols];
+            if (rows < 0) rows = 0;
+            if (cols < 0) cols = 0;
+            char[,] data_2 = new char[cols, rows];
             int preCol = data.GetLength(0);
             int preRow = data.GetLength(1);
             for (int i = 0; i < data_2.Length; i++)
             {
-                if (preCol > i/cols && preRow > i%rows)
-                    data_2[i/cols,i%rows] = data[i/cols,i%rows];
+                if (preCol > i % cols && preRow > i % rows)
+                {
+                    data_2[i % cols, i % rows] = data[i % cols, i % rows];
+                }
             }
             data = data_2;
         }
