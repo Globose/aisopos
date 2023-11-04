@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +12,8 @@ namespace aisopos
         public int cols { get; set; }
         public int rows { get; set; }
         Point current;
-        Point position;
-        public int sqSize { get; set; }
+        public Point position { get; set; }
+        public float sqSize { get; set; }
         public char[,] data;
         Pen pen;
 
@@ -22,51 +23,47 @@ namespace aisopos
             this.rows = rows;
             data = new char[rows,cols];
             current = new Point(0, 0);
-            position = new Point(0, 0);
-            sqSize = 30;
+            position = new Point(170, 580);
+            sqSize = 116f;
             pen = new Pen(Color.Red);
         }
 
-        public void Draw(Graphics g)
+        public void Draw(Graphics g, Point camera, float zoom)
         {
             for (int i = 0; i < cols; i++)
             {
-                g.DrawLine(pen, position.X+sqSize*i, position.Y, position.X+sqSize*i, position.Y+sqSize*rows);
+                g.DrawLine(pen, (int)(zoom*(position.X+sqSize*i))+camera.X, (int)(zoom*position.Y)+camera.Y, (int)(zoom*(position.X+sqSize*i)+camera.X), (int)(zoom*(position.Y+sqSize*rows))+ camera.Y);
             }
             for (int i = 0; i < rows; i++)
             {
-                g.DrawLine(pen, position.X, position.Y+sqSize * i, position.X+sqSize*cols, position.Y+sqSize*i);
+                g.DrawLine(pen, (int)(zoom*position.X)+camera.X, (int)(zoom*(position.Y+sqSize * i))+camera.Y, (int)(zoom*(position.X+sqSize*cols))+camera.X, (int)(zoom*(position.Y+sqSize*i))+camera.Y);
             }
         }
 
-        public void down()
+        public void reStructure(int rowChange, int colChange)
         {
-            if (current.Y < rows-1)
+            rows += rowChange;
+            cols += colChange;
+            char[,] data_2 = new char[rows, cols];
+            int preCol = data.GetLength(0);
+            int preRow = data.GetLength(1);
+            for (int i = 0; i < data_2.Length; i++)
             {
-                current.Y += 1;
+                if (preCol > i/cols && preRow > i%rows)
+                    data_2[i/cols,i%rows] = data[i/cols,i%rows];
             }
-        }
-        public void up()
-        {
-            if (current.Y > 0)
-            {
-                current.Y -= 1;
-            }
-        }
-        public void left()
-        {
-            if (current.X > 0)
-            {
-                current.X -= 1;
-            }
+            data = data_2;
         }
 
-        public void right()
+        public void move(int x, int y)
         {
-            if (current.X < cols - 1)
-            {
-                current.X += 1;
-            }
+            current.Y += y;
+            current.X += x;
+
+            if (current.Y >= rows) current.Y = rows - 1;
+            else if (current.Y < 0) current.Y = 0;
+            if (current.X >= cols) current.X = cols - 1;
+            else if (current.X < 0) current.X = 0;
         }
     }
 }
