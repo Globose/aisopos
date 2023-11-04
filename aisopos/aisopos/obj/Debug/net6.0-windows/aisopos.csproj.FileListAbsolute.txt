@@ -3,7 +3,6 @@ C:\data\projekt\aisopos\aisopos\aisopos\bin\Debug\net6.0-windows\aisopos.deps.js
 C:\data\projekt\aisopos\aisopos\aisopos\bin\Debug\net6.0-windows\aisopos.runtimeconfig.json
 C:\data\projekt\aisopos\aisopos\aisopos\bin\Debug\net6.0-windows\aisopos.dll
 C:\data\projekt\aisopos\aisopos\aisopos\bin\Debug\net6.0-windows\aisopos.pdb
-C:\data\projekt\aisopos\aisopos\aisopos\obj\Debug\net6.0-windows\aisopos.csproj.AssemblyReference.cache
 C:\data\projekt\aisopos\aisopos\aisopos\obj\Debug\net6.0-windows\aisopos.Aisopos.resources
 C:\data\projekt\aisopos\aisopos\aisopos\obj\Debug\net6.0-windows\aisopos.csproj.GenerateResource.cache
 C:\data\projekt\aisopos\aisopos\aisopos\obj\Debug\net6.0-windows\aisopos.GeneratedMSBuildEditorConfig.editorconfig

@@ -8,8 +8,8 @@
     "net6.0-windows7.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Tobias\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\tobia\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -17,14 +17,15 @@
       "projectUniqueName": "C:\\data\\projekt\\aisopos\\aisopos\\aisopos\\aisopos.csproj",
       "projectName": "aisopos",
       "projectPath": "C:\\data\\projekt\\aisopos\\aisopos\\aisopos\\aisopos.csproj",
-      "packagesPath": "C:\\Users\\Tobias\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\tobia\\.nuget\\packages\\",
       "outputPath": "C:\\data\\projekt\\aisopos\\aisopos\\aisopos\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Tobias\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\tobia\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -68,7 +69,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
       }
     }
   }

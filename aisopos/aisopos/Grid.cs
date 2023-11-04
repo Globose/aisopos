@@ -17,6 +17,8 @@ namespace aisopos
         public char[,] data;
         Pen pen;
 
+        char[] dd = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+
         public Grid(int cols, int rows)
         {
             this.cols = cols;
@@ -26,6 +28,13 @@ namespace aisopos
             position = new Point(170, 580);
             sqSize = 116f;
             pen = new Pen(Color.Red);
+            for (int i = 0; i < cols; i++)
+            {
+                for (int j = 0; j < rows; j++)
+                {
+                    data[i, j] = dd[j];
+                }
+            }
         }
 
         public void Draw(Graphics g, Point camera, float zoom)
@@ -38,10 +47,21 @@ namespace aisopos
             {
                 g.DrawLine(pen, (int)(zoom*position.X)+camera.X, (int)(zoom*(position.Y+sqSize * i))+camera.Y, (int)(zoom*(position.X+sqSize*cols))+camera.X, (int)(zoom*(position.Y+sqSize*i))+camera.Y);
             }
+
+            Font f = new Font(FontFamily.GenericSerif, 50*zoom);
+            SolidBrush b = new SolidBrush(Color.Black);
+            for (int i = 0; i < data.GetLength(0); i++)
+            {
+                for (int j = 0; j < data.GetLength(1); j++)
+                {
+                    g.DrawString(data[i, j].ToString(), f, b, (zoom * (position.X + sqSize * i)) + camera.X, (int)(zoom * (position.Y+sqSize*j)) + camera.Y);
+                }
+            }
         }
 
         public void reStructure(int rowChange, int colChange)
         {
+            //TODO: REWRITE
             rows += rowChange;
             cols += colChange;
             if (rows < 0) rows = 0;
@@ -57,6 +77,7 @@ namespace aisopos
                 }
             }
             data = data_2;
+            Debug.WriteLine(cols + "; " + rows);
         }
 
         public void move(int x, int y)
