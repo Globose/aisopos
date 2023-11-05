@@ -11,17 +11,15 @@ namespace aisopos
 {
     internal class Grid
     {
-        public int cols { get; set; }
-        public int rows { get; set; }
-        Point current;
-        public Point position { get; set; }
-        public float sqSize { get; set; }
-        public string[,] data { get; set; }
-        public bool[,] closed { get; set; }
-        Pen pen;
-
-        string[] dd = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
-
+        private int cols, rows;
+        private Point current, position, dir;
+        private float sqSize;
+        private string[,] data;
+        private bool[,] closed;
+        private Pen pen;
+        private SolidBrush solidBlack, solidBlue;
+        private StringFormat stringFormat;
+        
         public Grid(int cols, int rows)
         {
             this.cols = cols;
@@ -31,18 +29,59 @@ namespace aisopos
             current = new Point(0, 0);
             position = new Point(163, 588);
             sqSize = 126f;
+            dir = new Point(1,0);
+
             pen = new Pen(Color.Red);
-            for (int i = 0; i < cols; i++)
-            {
-                for (int j = 0; j < rows; j++)
-                {
-                    data[i, j] = dd[j];
-                }
-            }
+            solidBlack = new SolidBrush(Color.Black);
+            solidBlue = new SolidBrush(Color.FromArgb(37, Color.Blue));
+            stringFormat = new StringFormat();
+            stringFormat.LineAlignment = StringAlignment.Center;
+            stringFormat.Alignment = StringAlignment.Center;
         }
 
-        public void Draw(Graphics g, Point camera, float zoom)
+        public void swapDir()
         {
+            if (dir.X == 0) dir = new Point(1, 0);
+            else dir = new Point(0, 1);
+        }
+
+        public void Draw(Graphics g, Point camera, float zoom, bool gMode, bool marker)
+        {
+            //Drawing Text
+            Font font = new Font(FontFamily.GenericMonospace, 35 * zoom);
+
+            for (int i = 0; i < data.GetLength(0); i++)
+            {
+                for (int j = 0; j < data.GetLength(1); j++)
+                {
+                    if (data[i, j] is null) continue;
+                    g.DrawString(data[i, j].ToString(), font, solidBlack, 
+                        (int)(zoom * (position.X + sqSize * i+sqSize*.5)) + camera.X, 
+                        (int)(zoom * (position.Y+sqSize*j+sqSize*0.5)) + camera.Y,stringFormat);
+                }
+            }
+
+            if (!marker) return;
+
+            //Draw marker
+            g.FillEllipse(solidBlue, zoom * (position.X + sqSize * current.X) + camera.X, 
+                zoom*(position.Y + sqSize * current.Y) + camera.Y, sqSize*zoom, sqSize*zoom);
+
+            int tx = current.X;
+            int ty = current.Y;
+            while (true)
+            {
+                tx += dir.X;
+                ty += dir.Y;
+                if (tx < 0 || ty < 0 || tx >= data.GetLength(0) ||ty >= data.GetLength(1)) break;
+                if (closed[tx, ty]) break;
+                g.FillEllipse(solidBlue, (int)(zoom*(position.X+sqSize*tx + sqSize*.33f))+camera.X, 
+                    (int)(zoom*(position.Y+sqSize*ty+sqSize*.33))+camera.Y, zoom * sqSize * 0.33f, zoom * sqSize * 0.33f);
+            }
+
+            if (!gMode) return;
+
+            //Drawing Grid
             for (int i = 0; i < cols; i++)
             {
                 g.DrawLine(pen, (int)(zoom*(position.X+sqSize*i))+camera.X, (int)(zoom*position.Y)+camera.Y, (int)(zoom*(position.X+sqSize*i)+camera.X), (int)(zoom*(position.Y+sqSize*rows))+ camera.Y);
@@ -52,25 +91,28 @@ namespace aisopos
                 g.DrawLine(pen, (int)(zoom*position.X)+camera.X, (int)(zoom*(position.Y+sqSize * i))+camera.Y, (int)(zoom*(position.X+sqSize*cols))+camera.X, (int)(zoom*(position.Y+sqSize*i))+camera.Y);
             }
 
-            Font f = new Font(FontFamily.GenericSerif, 50*zoom);
+            //Drawing circles
             Pen p = new Pen(Color.Red);
-            SolidBrush b = new SolidBrush(Color.Black);
-            for (int i = 0; i < data.GetLength(0); i++)
-            {
-                for (int j = 0; j < data.GetLength(1); j++)
-                {
-                    g.DrawString(data[i, j].ToString(), f, b, (zoom * (position.X + sqSize * i)) + camera.X, (int)(zoom * (position.Y+sqSize*j)) + camera.Y);
-                }
-            }
             for (int i = 0; i < closed.GetLength(0); i++)
             {
                 for (int j = 0; j < closed.GetLength(1); j++)
                 {
                     if (closed[i,j])
                     {
-                        g.DrawEllipse(p, (zoom * (position.X + sqSize * i)) + camera.X, (int)(zoom * (position.Y + sqSize * j)) + camera.Y, (int)sqSize*zoom, (int)sqSize*zoom);
+                        g.DrawEllipse(p, (zoom * (position.X + sqSize * i)) + camera.X, 
+                            (int)(zoom * (position.Y + sqSize * j)) + camera.Y, (int)sqSize*zoom, (int)sqSize*zoom);
                     }
                 }
+            }
+        }
+
+        public void changeLetter(string letter)
+        {
+            if (current.X < data.GetLength(0) && current.Y < data.GetLength(1) && current.X >= 0 && current.Y >= 0)
+            {
+                data[current.X, current.Y] = letter;
+                if (letter == "") move(-dir.X, -dir.Y);
+                else move(dir.X, dir.Y);
             }
         }
 
@@ -78,11 +120,15 @@ namespace aisopos
         {
             int i = (int)((x-position.X) / sqSize);
             int j = (int)((y-position.Y) / sqSize);
-            Debug.WriteLine("CHangeing " + i + "; " + j);
             if (i < closed.GetLength(0) && j < closed.GetLength(1) && i >= 0 && j >= 0)
             {
                 closed[i, j] = !closed[i, j];
             }
+        }
+
+        public void changeSqSize(int diff)
+        {
+            sqSize += 0.4f * diff;
         }
 
         public void findOpen(Image img)
@@ -128,6 +174,11 @@ namespace aisopos
             }
         }
 
+        public void moveGrid(int x, int y)
+        {
+            position = new Point(position.X + x, position.Y + y);
+        }
+
         public void reStructure(int rowChange, int colChange)
         {
             rows += rowChange;
@@ -149,15 +200,38 @@ namespace aisopos
             closed = new bool[cols, rows];
         }
 
+        public void moveTo(int x, int y)
+        {
+            int i = (int)((x - position.X) / sqSize);
+            int j = (int)((y - position.Y) / sqSize);
+            if (i < data.GetLength(0) && j < data.GetLength(1) && i >= 0 && j >= 0)
+            {
+                if (!closed[i, j])
+                {
+                    current = new Point(i, j);
+                }
+            }
+        }
+
         public void move(int x, int y)
         {
-            current.Y += y;
-            current.X += x;
+            if (x > 1 || x < -1 || y > 1 || y < -1 || x == y) return;
+            int tX = current.X;
+            int tY = current.Y;
+            while (true)
+            {
+                tX += x;
+                tY += y;
 
-            if (current.Y >= rows) current.Y = rows - 1;
-            else if (current.Y < 0) current.Y = 0;
-            if (current.X >= cols) current.X = cols - 1;
-            else if (current.X < 0) current.X = 0;
+                if (tX < 0 || tX >= data.GetLength(0)) return;
+                if (tY < 0 || tY >= data.GetLength(1)) return;
+
+                if (!closed[tX, tY])
+                {
+                    current = new Point(tX, tY);
+                    break;
+                }
+            }
         }
     }
 }
