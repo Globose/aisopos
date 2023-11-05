@@ -63,9 +63,6 @@ namespace aisopos
             else if (e.KeyCode == Keys.T) saveImage();
             else if (e.KeyCode == Keys.G) gMode = !gMode;
             else if (e.KeyCode == Keys.Enter && gMode) createGrid();
-            {
-
-            }
 
             Invalidate();
 
@@ -96,7 +93,7 @@ namespace aisopos
 
         private void createGrid()
         {
-
+            grid.findOpen(img);
         }
 
         private void saveImage()
@@ -115,10 +112,13 @@ namespace aisopos
 
         private void Aisopos_MouseDown(object sender, MouseEventArgs e)
         {
-            points.Add(new Point((int)((e.X-camera.X)/zoom), (int)((e.Y-camera.Y)/zoom)));
-            int x = (int)((e.X - camera.X) / zoom);
-            int y = (int)((e.Y - camera.Y) / zoom);
-            Invalidate();
+            if (gMode)
+            {
+                int x = (int)((e.X - camera.X) / zoom);
+                int y = (int)((e.Y - camera.Y) / zoom);
+                grid.changeOpen(x, y);
+                Invalidate();
+            }
         }
     }
 }
