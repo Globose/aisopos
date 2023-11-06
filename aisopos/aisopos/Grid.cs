@@ -14,7 +14,7 @@ namespace aisopos
         private int cols, rows;
         private Point current, position, dir;
         private float sqSize;
-        private string[,] data;
+        private char[,] data;
         private bool[,] closed;
         private Pen pen;
         private SolidBrush solidBlack, solidBlue;
@@ -24,7 +24,7 @@ namespace aisopos
         {
             this.cols = cols;
             this.rows = rows;
-            data = new string[cols, rows];
+            data = new char[cols, rows];
             closed = new bool[cols, rows];
             current = new Point(0, 0);
             position = new Point(163, 588);
@@ -37,6 +37,62 @@ namespace aisopos
             stringFormat = new StringFormat();
             stringFormat.LineAlignment = StringAlignment.Center;
             stringFormat.Alignment = StringAlignment.Center;
+        }
+
+        public float getSqSize()
+        {
+            return sqSize;
+        }
+        public void setSqSize(float size)
+        {
+            sqSize = size;
+        }
+
+        public void setPos(Point p)
+        {
+            position = p;
+        }
+        public Point pos()
+        {
+            return position;
+        }
+
+        public int rowCount()
+        {
+            return rows;
+        }
+
+        public int colCount()
+        {
+            return cols;
+        }
+
+        public string getText()
+        {
+            string a = string.Empty;
+            for (int i = 0; i < data.GetLength(0); i++)
+            {
+                for (int j = 0; j < data.GetLength(1); j++)
+                {
+                    if (data[i, j] == 0) a += ' ';
+                    else a += data[i, j];
+                }
+            }
+            return a;
+        }
+
+        public string getClosed()
+        {
+            string a = string.Empty;
+            for (int i = 0; i < closed.GetLength(0); i++)
+            {
+                for (int j = 0; j < closed.GetLength(1); j++)
+                {
+                    if (closed[i, j]) a += '1';
+                    else a += '0';
+                }
+            }
+            return a;
         }
 
         public void swapDir()
@@ -54,7 +110,6 @@ namespace aisopos
             {
                 for (int j = 0; j < data.GetLength(1); j++)
                 {
-                    if (data[i, j] is null) continue;
                     g.DrawString(data[i, j].ToString(), font, solidBlack, 
                         (int)(zoom * (position.X + sqSize * i+sqSize*.5)) + camera.X, 
                         (int)(zoom * (position.Y+sqSize*j+sqSize*0.5)) + camera.Y,stringFormat);
@@ -106,14 +161,19 @@ namespace aisopos
             }
         }
 
-        public void changeLetter(string letter)
+        public void changeLetter(char letter)
         {
             if (current.X < data.GetLength(0) && current.Y < data.GetLength(1) && current.X >= 0 && current.Y >= 0)
             {
                 data[current.X, current.Y] = letter;
-                if (letter == "") move(-dir.X, -dir.Y);
-                else move(dir.X, dir.Y);
             }
+            if (letter == ' ') move(-dir.X, -dir.Y);
+            else move(dir.X, dir.Y);
+        }
+
+        public void setLetter(char letter, int x, int y)
+        {
+            data[x,y] = letter;
         }
 
         public void changeOpen(int x, int y)
@@ -123,6 +183,14 @@ namespace aisopos
             if (i < closed.GetLength(0) && j < closed.GetLength(1) && i >= 0 && j >= 0)
             {
                 closed[i, j] = !closed[i, j];
+            }
+        }
+
+        public void close(int i, int j)
+        {
+            if (i < closed.GetLength(0) && j < closed.GetLength(1) && i >= 0 && j >= 0)
+            {
+                closed[i, j] = true;
             }
         }
 
@@ -170,7 +238,6 @@ namespace aisopos
                         closed[i, j] = avgAlpha < 150;
                     }
                 }
-                bitmap.Save("temp.png", ImageFormat.Png);
             }
         }
 
@@ -185,14 +252,14 @@ namespace aisopos
             cols += colChange;
             if (rows < 0) rows = 0;
             if (cols < 0) cols = 0;
-            string[,] data_2 = new string[cols, rows];
+            char[,] data_2 = new char[cols, rows];
             int preCol = data.GetLength(0);
             int preRow = data.GetLength(1);
             for (int i = 0; i < data_2.GetLength(0); i++)
             {
                 for (int j = 0; j < data_2.GetLength(1); j++)
                 {
-                    if (j >= preRow || i>= preCol) data_2[i, j] = "";
+                    if (j >= preRow || i>= preCol) data_2[i, j] = ' ';
                     else data_2[i, j] = data[i, j];
                 }
             }
