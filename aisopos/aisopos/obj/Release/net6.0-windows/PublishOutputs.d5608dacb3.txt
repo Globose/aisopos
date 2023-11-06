@@ -1,0 +1,5 @@
+C:\data\projekt\aisopos\aisopos\aisopos\bin\Release\net6.0-windows\app.publish\aisopos.exe
+C:\data\projekt\aisopos\aisopos\aisopos\bin\Release\net6.0-windows\app.publish\aisopos.dll
+C:\data\projekt\aisopos\aisopos\aisopos\bin\Release\net6.0-windows\app.publish\aisopos.deps.json
+C:\data\projekt\aisopos\aisopos\aisopos\bin\Release\net6.0-windows\app.publish\aisopos.runtimeconfig.json
+C:\data\projekt\aisopos\aisopos\aisopos\bin\Release\net6.0-windows\app.publish\aisopos.pdb

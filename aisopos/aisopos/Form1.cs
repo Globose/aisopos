@@ -8,6 +8,7 @@ namespace aisopos
 {
     public partial class Aisopos : Form
     {
+        string data_path = "C:/data/cross/";
         Image? img;
         Point camera;
         float zoom;
@@ -38,13 +39,13 @@ namespace aisopos
                     sourceRect = new Rectangle(0, 0, img.Width, img.Height);
                     destRect = new Rectangle(0, 0, img.Width, img.Height);
                     imgUrl = "u"+rand.Next(1000000)+".jpeg";
-                    img.Save(imgUrl, ImageFormat.Jpeg);
+                    img.Save(data_path + imgUrl, ImageFormat.Jpeg);
                     grid = new Grid(10, 10);
                     List<string> allLines = new List<string>();
                     allLines.Add(toSaveString());
                     try
                     {
-                        string[] t = File.ReadAllLines("data.txt");
+                        string[] t = File.ReadAllLines(data_path+"data.txt");
                         foreach (string t1 in t)
                         {
                             allLines.Add(t1);
@@ -57,7 +58,7 @@ namespace aisopos
 
                     try
                     {
-                        File.WriteAllLines("data.txt", allLines.ToArray());
+                        File.WriteAllLines(data_path + "data.txt", allLines.ToArray());
                     }
                     catch (Exception e1) 
                     {
@@ -68,7 +69,7 @@ namespace aisopos
                 }
                 else
                 {
-                    MessageBox.Show("No image");
+                    MessageBox.Show(Environment.CurrentDirectory);
                 }
             }
             else if (e.KeyCode == Keys.ControlKey) ctrlDown = true;
@@ -142,7 +143,7 @@ namespace aisopos
             string[] rows;
             try
             {
-                rows = File.ReadAllLines("data.txt");
+                rows = File.ReadAllLines(data_path + "data.txt");
             }
             catch
             {
@@ -171,7 +172,7 @@ namespace aisopos
                             try
                             {
                                 imgUrl = action[1];
-                                img = Image.FromFile(action[1]);
+                                img = Image.FromFile(data_path + action[1]);
                             }
                             catch 
                             {
@@ -245,7 +246,7 @@ namespace aisopos
             string[] allLines;
             try
             {
-                allLines = File.ReadAllLines("data.txt");
+                allLines = File.ReadAllLines(data_path + "data.txt");
             }
             catch (Exception e)
             {
@@ -255,14 +256,14 @@ namespace aisopos
             try
             {
                 allLines[0] = toSaveString();
-                File.WriteAllLines("data.txt", allLines);
+                File.WriteAllLines(data_path + "data.txt", allLines);
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
             }
 
-            bitmap.Save("solved.jpeg", ImageFormat.Jpeg);
+            bitmap.Save(data_path + "solved_" +imgUrl, ImageFormat.Jpeg);
         }
 
         private string toSaveString()
