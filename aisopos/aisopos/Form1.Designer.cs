@@ -28,21 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            SuspendLayout();
+            this.SuspendLayout();
             // 
             // Aisopos
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(688, 425);
-            DoubleBuffered = true;
-            Margin = new Padding(3, 2, 3, 2);
-            Name = "Aisopos";
-            Text = "Form1";
-            KeyDown += Aisopos_KeyDown;
-            KeyUp += Aisopos_KeyUp;
-            MouseDown += Aisopos_MouseDown;
-            ResumeLayout(false);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(786, 567);
+            this.DoubleBuffered = true;
+            this.Name = "Aisopos";
+            this.Text = "Aisopos";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Aisopos_FormClosed);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Aisopos_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Aisopos_KeyUp);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Aisopos_MouseDown);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
