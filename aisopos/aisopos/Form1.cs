@@ -12,7 +12,7 @@ namespace aisopos
         Image? img;
         Point camera;
         Rectangle sourceRect, destRect;
-        bool ctrlDown;
+        bool ctrlDown, shiftDown;
         int mode;
         float zoom;
         string? imgUrl;
@@ -23,6 +23,7 @@ namespace aisopos
         {
             InitializeComponent();
             ctrlDown = false;
+            shiftDown = false;
             mode = 0;
             zoom = 1;
             rand= new Random();
@@ -32,6 +33,7 @@ namespace aisopos
         private void Aisopos_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.ControlKey) ctrlDown = true;
+            else if (e.KeyCode == Keys.ShiftKey) shiftDown = true;
             else if (ctrlDown)
             {
                 if (e.KeyCode == Keys.V) PasteImage();
@@ -57,12 +59,14 @@ namespace aisopos
                 else if (e.KeyCode == Keys.Q) grid.RebuildGrid(0, -1);
                 else if (e.KeyCode == Keys.Z) grid.RebuildGrid(-1, 0);
                 else if (e.KeyCode == Keys.C) grid.RebuildGrid(1, 0);
-                else if (e.KeyCode == Keys.A) grid.MoveGrid(-1, 0);
-                else if (e.KeyCode == Keys.D) grid.MoveGrid(1, 0);
-                else if (e.KeyCode == Keys.W) grid.MoveGrid(0, -1);
-                else if (e.KeyCode == Keys.S) grid.MoveGrid(0, 1);
-                else if (e.KeyCode == Keys.D2) grid.squareSize += 0.4f * grid.squareSize;
-                else if (e.KeyCode == Keys.D1) grid.squareSize -= 0.4f * grid.squareSize;
+                else if (e.KeyCode == Keys.A) grid.MoveGrid(-1, 0, shiftDown);
+                else if (e.KeyCode == Keys.D) grid.MoveGrid(1, 0, shiftDown);
+                else if (e.KeyCode == Keys.W) grid.MoveGrid(0, -1, shiftDown);
+                else if (e.KeyCode == Keys.S) grid.MoveGrid(0, 1, shiftDown);
+                else if (e.KeyCode == Keys.D2 && shiftDown) grid.squareSize += 2f;
+                else if (e.KeyCode == Keys.D1 && shiftDown) grid.squareSize -= 2f;
+                else if (e.KeyCode == Keys.D2) grid.squareSize += 0.3f;
+                else if (e.KeyCode == Keys.D1) grid.squareSize -= 0.3f;
                 else if (e.KeyCode == Keys.Enter) grid.AnalyseGrid(img);
                 else if (e.KeyCode == Keys.Space) grid.ChangeOpenSelected();
             }
@@ -98,9 +102,9 @@ namespace aisopos
             img.Save(data_path + imgUrl, ImageFormat.Jpeg);
             sourceRect = new Rectangle(0, 0, img.Width, img.Height);
             destRect = new Rectangle(0, 0, img.Width, img.Height);
-            grid = new Grid(23, 31);
+            grid = new Grid(23, 30);
 
-            List<string> allLines = new List<string>{GetSaveString()};
+            List<string> allLines = new List<string>();
             try
             {
                 string[] t = File.ReadAllLines(data_path + "data.txt");
@@ -110,6 +114,8 @@ namespace aisopos
                 }
             }
             catch { }
+
+            allLines.Add(GetSaveString());
 
             try { File.WriteAllLines(data_path + "data.txt", allLines.ToArray()); }
             catch { }
@@ -128,6 +134,7 @@ namespace aisopos
         private void Aisopos_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.ControlKey) ctrlDown = false;
+            else if (e.KeyCode == Keys.ShiftKey) shiftDown = false;
         }
 
         private void LoadData()
@@ -137,14 +144,27 @@ namespace aisopos
             catch {rows = new string[0];}
             if (rows.Length == 0) return;
 
-            string[] data = rows[rows.Length - 1].Split(';');
-            if (data.Length != 8) return;
-            try
+            string[]? data = null;
+            for (int i = 1; i <= rows.Length; i++)
             {
-                imgUrl = data[0];
-                img = Image.FromFile(data_path + data[0]);
+                data = rows[rows.Length - i].Split(';');
+                if (data.Length != 8) return;
+                try
+                {
+                    imgUrl = data[0];
+                    img = Image.FromFile(data_path + data[0]);
+                    break;
+                }
+                catch {
+                    string[] rows2 = new string[rows.Length-1];
+                    for (int j = 0; j < rows2.Length; j++)
+                    {
+                        rows2[j] = rows[j];
+                    }
+                    File.WriteAllLines(data_path + "data.txt", rows2);
+                };
             }
-            catch {return;};
+            if (data is null || img is null) return;
             int rowCount = 1;
             int colCount = 1;
             int gridPosX = 0;

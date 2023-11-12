@@ -65,9 +65,10 @@ namespace aisopos
             stringFormat.Alignment = StringAlignment.Center;
         }
 
-        public void MoveGrid(int dX, int dY)
+        public void MoveGrid(int dX, int dY, bool shiftDown)
         {
-            Position = new Point(Position.X + dX, Position.Y + dY);
+            if (shiftDown) Position = new Point(Position.X + dX*10, Position.Y + dY*10);
+            else Position = new Point(Position.X + dX, Position.Y + dY);
         }
 
         public override string ToString()
@@ -93,7 +94,7 @@ namespace aisopos
         public void Draw(Graphics g, Point camera, float zoom, int mode, bool marker)
         {
             //Drawing Text
-            Font font = new Font(FontFamily.GenericMonospace, 35 * zoom);
+            Font font = new Font(FontFamily.GenericMonospace, (squareSize*0.26f) * zoom);
 
             for (int i = 0; i < data.GetLength(0); i++)
             {
@@ -223,6 +224,7 @@ namespace aisopos
                             {
                                 int x1 = (int)(x + ((float)squareSize / 4) + ((float)squareSize / 25) * (k+1));
                                 int y1 = (int)(y + ((float)squareSize / 4) + ((float)squareSize / 25) * (l+1));
+                                if (x1 < 0 || bitmap.Width <= x1 || y1 < 0 || bitmap.Height <= y1) continue;
 
                                 int alpha = bitmap.GetPixel(x1, y1).R+ bitmap.GetPixel(x1, y1).G+ bitmap.GetPixel(x1, y1).B;
                                 alpha /= 3;
@@ -294,7 +296,7 @@ namespace aisopos
                 {
                     if (mode == 2)
                     {
-                        tX = cols - 1;
+                        tX = cols;
                         tY -= 1;
                         continue;
                     }
@@ -304,7 +306,7 @@ namespace aisopos
                 {
                     if (mode == 2)
                     {
-                        tX = 0;
+                        tX = -1;
                         tY += 1;
                         continue;
                     }
