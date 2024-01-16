@@ -30,6 +30,30 @@ namespace aisopos
             LoadData();
         }
 
+        private void Zoom(bool zoomIn)
+        {
+            int width = ClientRectangle.Width;
+            int height = ClientRectangle.Height;
+            float oWidth = width * zoom;
+            float oHeight = height * zoom;
+
+            if (zoomIn)
+            {
+                zoom *= 1.03f;
+                float nWidth = width * zoom;
+                float nHeight = height * zoom;
+                Debug.WriteLine(oWidth + "; " + nWidth);
+                float dW = oWidth-nWidth;
+                float dH = oHeight-nHeight;
+                camera.X += (int)(dW);
+                camera.Y += (int)(dH);
+            }
+            else
+            {
+                zoom *= 0.97f;
+            }
+        }
+
         private void Aisopos_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.ControlKey) ctrlDown = true;
@@ -47,8 +71,8 @@ namespace aisopos
                 else if (e.KeyCode == Keys.M) mode = 2;
             }
             else if (img is null || grid is null) return;
-            else if (e.KeyCode == Keys.Oemplus) zoom *= 1.03f;
-            else if (e.KeyCode == Keys.OemMinus) zoom *= 0.97f;
+            else if (e.KeyCode == Keys.Oemplus) Zoom(true);
+            else if (e.KeyCode == Keys.OemMinus) Zoom(false);
             else if (e.KeyCode == Keys.Up) grid.MoveSelectedInDir(0, -1, false, mode);
             else if (e.KeyCode == Keys.Down) grid.MoveSelectedInDir(0, 1, false, mode);
             else if (e.KeyCode == Keys.Left) grid.MoveSelectedInDir(-1, 0, false, mode);
